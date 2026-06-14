@@ -2,10 +2,12 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveUpload, activeUploadLabel } from "@/lib/activeUpload";
+import { getSystemSettings } from "@/lib/settings";
 import { getOrgOrderLines, summarizeBalances, resolveTargetOrgId } from "@/lib/orders";
 import { formatNumberWhole } from "@/lib/format";
 import ActivePeriodBanner from "@/components/ActivePeriodBanner";
 import InstallButton from "@/components/InstallButton";
+import ClickSenseButton from "@/components/ClickSenseButton";
 import FarmPicker from "@/components/FarmPicker";
 import type { Organization } from "@/lib/types";
 
@@ -18,6 +20,7 @@ export default async function HomePage({
   const { org: orgParam } = await searchParams;
   const activeUpload = await getActiveUpload();
   const label = activeUploadLabel(activeUpload);
+  const settings = await getSystemSettings();
 
   const targetOrgId = resolveTargetOrgId(profile, orgParam);
 
@@ -134,6 +137,8 @@ export default async function HomePage({
           </ul>
         </>
       )}
+
+      <ClickSenseButton url={settings.clicksense_url} enabled={settings.clicksense_enabled} />
 
       <InstallButton />
     </div>

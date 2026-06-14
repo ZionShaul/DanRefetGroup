@@ -1,0 +1,29 @@
+// כפתור קישור חיצוני למערכת "עידן חדש" – נתונים היסטוריים וניתוח.
+// מוצג רק כשהוגדר קישור והופעל בהגדרות המערכת.
+export default function ClickSenseButton({
+  url,
+  enabled,
+}: {
+  url: string | null;
+  enabled: boolean;
+}) {
+  if (!enabled || !url) return null;
+
+  return (
+    <div className="flex justify-center">
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn inline-flex items-center gap-2 rounded-xl border border-brand-line bg-brand-surface px-3 py-1.5 shadow-sm transition hover:border-brand-primary hover:shadow"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logos/edan.png" alt="עידן חדש" className="h-5 w-auto object-contain" />
+        <span className="flex items-center gap-1 text-xs font-semibold text-brand-primary-dark">
+          נתונים היסטוריים וניתוח
+          <span aria-hidden>↗</span>
+        </span>
+      </a>
+    </div>
+  );
+}

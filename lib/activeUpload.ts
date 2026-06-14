@@ -8,7 +8,7 @@ export interface ActiveUpload {
 }
 
 /**
- * מחזיר את פרטי המחירון הפעיל (שם תצוגה ותאריך פרסום) לחשיפה למשתמש.
+ * מחזיר את פרטי הטעינה הפעילה (שם תצוגה ותאריך פרסום) לחשיפה למשתמש.
  * דרך RPC security definer, כי RLS על monthly_uploads מוגבל למנהל.
  * השם המוצג: title אם הוגדר, אחרת שם הקובץ.
  */
@@ -19,7 +19,7 @@ export async function getActiveUpload(): Promise<ActiveUpload | null> {
   return row;
 }
 
-/** שם המחירון הפעיל להצגה (title או שם הקובץ), או null אם אין מחירון פעיל. */
+/** שם הטעינה הפעילה להצגה (title או שם הקובץ), או null אם אין טעינה פעילה. */
 export function activeUploadLabel(upload: ActiveUpload | null): string | null {
   if (!upload) return null;
   return upload.title?.trim() || upload.file_name || null;

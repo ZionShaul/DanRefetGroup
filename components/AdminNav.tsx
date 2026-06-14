@@ -7,6 +7,7 @@ const LINKS = [
   { href: "/admin", label: "סקירה", exact: true },
   { href: "/admin/upload", label: "טעינת קובץ" },
   { href: "/admin/users", label: "ניהול משתמשים" },
+  { href: "/admin/settings", label: "הגדרות מערכת" },
 ];
 
 export default function AdminNav() {

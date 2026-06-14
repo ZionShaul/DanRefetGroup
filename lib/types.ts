@@ -71,6 +71,17 @@ export interface RejectedRow {
   raw_data: Record<string, unknown>;
 }
 
+export interface SystemSettings {
+  id: number;
+  clicksense_url: string | null; // קישור "עידן חדש"
+  clicksense_enabled: boolean;
+  registration_url: string | null;
+  registration_enabled: boolean;
+  whatsapp_number: string | null;
+  whatsapp_message: string | null;
+  whatsapp_enabled: boolean;
+}
+
 // ===== טיפוסים מחושבים לתצוגת הרפת =====
 
 /** סיכום יתרה לחומר (כרטיס במסך הבית). */

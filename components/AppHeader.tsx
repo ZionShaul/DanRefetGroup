@@ -1,5 +1,15 @@
+import RegistrationIcon from "@/components/RegistrationIcon";
+
 // כותרת עליונה משותפת למסכי המשתמש
-export default function AppHeader({ org }: { org?: string | null }) {
+export default function AppHeader({
+  org,
+  registrationUrl,
+  registrationEnabled,
+}: {
+  org?: string | null;
+  registrationUrl?: string | null;
+  registrationEnabled?: boolean;
+}) {
   return (
     <header className="sticky top-0 z-10 border-b border-brand-line bg-brand-primary text-white">
       <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
@@ -11,6 +21,9 @@ export default function AppHeader({ org }: { org?: string | null }) {
         <div className="leading-tight">
           <div className="text-base font-bold">ניהול רכש רפתות</div>
           {org && <div className="text-xs text-white/80">{org}</div>}
+        </div>
+        <div className="ms-auto">
+          <RegistrationIcon url={registrationUrl} enabled={registrationEnabled} />
         </div>
       </div>
     </header>

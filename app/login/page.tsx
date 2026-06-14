@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getAuthUser, getProfileAnyStatus } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import LoginForm from "./LoginForm";
 import BlockedNotice from "./BlockedNotice";
 
@@ -19,6 +20,12 @@ export default async function LoginPage() {
     }
   }
 
+  // קישור "בקשה לרישום משתמש" – דרך RPC הנגיש גם ללא התחברות
+  const supabase = await createClient();
+  const { data: regData } = await supabase.rpc("get_registration_link");
+  const reg = (regData as { url: string | null; enabled: boolean }[] | null)?.[0] ?? null;
+  const showRegistration = Boolean(reg?.enabled && reg?.url);
+
   return (
     <main className="flex flex-1 items-center justify-center p-6">
       <div className="w-full max-w-sm">
@@ -31,6 +38,18 @@ export default async function LoginPage() {
           <p className="mt-1 text-sm text-brand-muted">משקי דן</p>
         </div>
         <LoginForm />
+
+        {showRegistration && (
+          <a
+            href={reg!.url!}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-brand-primary bg-brand-primary-light px-4 py-3 text-sm font-semibold text-brand-primary-dark"
+          >
+            בקשה לרישום משתמש
+            <span aria-hidden>↗</span>
+          </a>
+        )}
       </div>
     </main>
   );

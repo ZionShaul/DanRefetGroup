@@ -1,13 +1,25 @@
 import { requireUser } from "@/lib/auth";
+import { getSystemSettings } from "@/lib/settings";
 import AppHeader from "@/components/AppHeader";
 import BottomNav from "@/components/BottomNav";
+import WhatsAppFab from "@/components/WhatsAppFab";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireUser();
+  const settings = await getSystemSettings();
   return (
     <div className="flex min-h-full flex-1 flex-col">
-      <AppHeader org={profile.organization?.name} />
+      <AppHeader
+        org={profile.organization?.name}
+        registrationUrl={settings.registration_url}
+        registrationEnabled={settings.registration_enabled}
+      />
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-4">{children}</main>
+      <WhatsAppFab
+        number={settings.whatsapp_number}
+        message={settings.whatsapp_message}
+        enabled={settings.whatsapp_enabled}
+      />
       <BottomNav isAdmin={profile.role === "admin"} />
     </div>
   );

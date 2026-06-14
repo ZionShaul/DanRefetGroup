@@ -1,5 +1,6 @@
 import { requireAdmin } from "@/lib/auth";
 import AdminNav from "@/components/AdminNav";
+import LogoutButton from "@/components/LogoutButton";
 
 export const metadata = { title: "ניהול - משקי דן רכש רפתות" };
 
@@ -16,7 +17,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </div>
             <div className="text-base font-bold">ניהול רכש רפתות</div>
           </div>
-          <div className="text-xs text-white/80">{profile.full_name}</div>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-white/80">{profile.full_name}</span>
+            <LogoutButton />
+          </div>
         </div>
       </header>
 
