@@ -1,3 +1,7 @@
+"use client";
+
+import { track } from "@/lib/analytics/track";
+
 // כפתור קישור חיצוני למערכת "עידן חדש" – נתונים היסטוריים וניתוח.
 // מוצג רק כשהוגדר קישור והופעל בהגדרות המערכת.
 export default function ClickSenseButton({
@@ -15,6 +19,7 @@ export default function ClickSenseButton({
         href={url}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => track("click_edan", { url })}
         className="btn inline-flex items-center gap-2 rounded-xl border border-brand-line bg-brand-surface px-3 py-1.5 shadow-sm transition hover:border-brand-primary hover:shadow"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

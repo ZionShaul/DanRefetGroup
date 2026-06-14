@@ -1,3 +1,7 @@
+"use client";
+
+import { track } from "@/lib/analytics/track";
+
 // אייקון "בקשת רישום משתמש" בכותרת המשתמש – מקשר לטופס/קישור שהוגדר בניהול.
 // מוצג רק כשהוגדר קישור והופעל בהגדרות המערכת.
 export default function RegistrationIcon({
@@ -14,6 +18,7 @@ export default function RegistrationIcon({
       href={url}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => track("click_registration", { url })}
       aria-label="בקשת צירוף משתמש"
       title="בקשת צירוף משתמש"
       className="btn flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 text-white transition hover:bg-white/25"

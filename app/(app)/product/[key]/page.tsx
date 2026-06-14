@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { getOrgOrderLines, resolveTargetOrgId } from "@/lib/orders";
 import { formatNumberWhole, formatMonth, formatDate, formatNumber } from "@/lib/format";
+import TrackOnMount from "@/components/TrackOnMount";
 import type { OrderLine } from "@/lib/types";
 
 export default async function ProductPage({
@@ -46,6 +47,7 @@ export default async function ProductPage({
 
   return (
     <div className="space-y-5">
+      <TrackOnMount event="view_product" properties={{ product }} />
       <Link href={`/${qs}`} className="inline-block text-sm text-brand-primary underline">
         → חזרה ליתרות
       </Link>

@@ -1,3 +1,7 @@
+"use client";
+
+import { track } from "@/lib/analytics/track";
+
 // כפתור תמיכה צף בוואטסאפ – מוצג בכל מסכי המשתמש כשהוגדר ומופעל.
 export default function WhatsAppFab({
   number,
@@ -19,6 +23,7 @@ export default function WhatsAppFab({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => track("click_whatsapp", { number: digits })}
       aria-label="תמיכה בוואטסאפ"
       title="תמיכה בוואטסאפ"
       className="btn fixed bottom-20 left-4 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition hover:scale-105 active:scale-95"

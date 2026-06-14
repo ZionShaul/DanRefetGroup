@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { track } from "@/lib/analytics/track";
 
 // אירוע ההתקנה של כרום (אינו בטיפוסי ה-DOM הסטנדרטיים)
 interface BeforeInstallPromptEvent extends Event {
@@ -57,12 +58,15 @@ export default function InstallButton() {
 
   async function onClick() {
     if (deferred) {
+      track("click_install", { platform: "android" });
       await deferred.prompt();
-      await deferred.userChoice;
+      const choice = await deferred.userChoice;
+      track("install_outcome", { outcome: choice.outcome });
       setDeferred(null);
       return;
     }
     if (isIOS) {
+      track("click_install", { platform: "ios" });
       setShowIosHelp((s) => !s);
     }
   }
