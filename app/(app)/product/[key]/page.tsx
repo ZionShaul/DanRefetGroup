@@ -113,8 +113,7 @@ export default async function ProductPage({
                 <th className="px-1.5 py-2 text-right">חודש</th>
                 <th className="px-1.5 py-2 text-left">יתרה</th>
                 <th className="px-1.5 py-2 text-left">מחיר</th>
-                <th className="px-1.5 py-2 text-right">הזמנה</th>
-                <th className="px-1.5 py-2 text-right">תאריך</th>
+                <th className="px-1.5 py-2 text-right">הזמנה / תאריך</th>
               </tr>
             </thead>
             <tbody>
@@ -126,8 +125,10 @@ export default async function ProductPage({
                     {formatNumber(l.balance)}
                   </td>
                   <td className="px-1.5 py-2 text-left" dir="ltr">{formatNumber(l.price)}</td>
-                  <td className="px-1.5 py-2 break-words" dir="ltr">{l.order_no ?? "—"}</td>
-                  <td className="px-1.5 py-2" dir="ltr">{formatDate(l.order_date)}</td>
+                  <td className="px-1.5 py-2 text-right" dir="ltr">
+                    <div className="break-words">{l.order_no ?? "—"}</div>
+                    <div className="text-[10px] text-brand-muted">{formatDate(l.order_date)}</div>
+                  </td>
                 </tr>
               ))}
             </tbody>
