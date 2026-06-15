@@ -23,6 +23,10 @@ export interface Profile {
   // הרשאות תצוגה (שמורות לתאימות מסך הניהול)
   show_purchases: boolean;
   show_my_purchases: boolean;
+  // קשירת מכשיר יחיד (מניעת שיתוף התחברות)
+  active_device_id: string | null;
+  active_device_label: string | null;
+  device_bound_at: string | null;
   created_at: string;
 }
 

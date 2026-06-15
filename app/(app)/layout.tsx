@@ -5,12 +5,14 @@ import AppHeader from "@/components/AppHeader";
 import BottomNav from "@/components/BottomNav";
 import WhatsAppFab from "@/components/WhatsAppFab";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
+import DeviceGuard from "@/components/DeviceGuard";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const profile = await requireUser();
   const settings = await getSystemSettings();
   return (
     <div className="flex min-h-full flex-1 flex-col">
+      <DeviceGuard />
       <Suspense fallback={null}>
         <AnalyticsTracker userId={profile.id} orgId={profile.organization_id} />
       </Suspense>

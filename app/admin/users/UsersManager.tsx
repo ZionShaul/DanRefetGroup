@@ -8,6 +8,7 @@ import {
   deleteUser,
   setUserStatus,
   setUserRole,
+  resetUserDevice,
   createOrganization,
 } from "@/lib/actions/users";
 import { formatDateTime } from "@/lib/format";
@@ -83,6 +84,14 @@ export default function UsersManager({
 
   async function toggleRole(u: UserRow) {
     const res = await setUserRole(u.id, u.role === "admin" ? "user" : "admin");
+    if (!res.ok) setError(res.error);
+    else router.refresh();
+  }
+
+  async function resetDevice(u: UserRow) {
+    if (!confirm(`לאפס את המכשיר הקשור של "${u.full_name}"? יתאפשר חיבור ממכשיר חדש.`)) return;
+    setError(null);
+    const res = await resetUserDevice(u.id);
     if (!res.ok) setError(res.error);
     else router.refresh();
   }
@@ -243,6 +252,7 @@ export default function UsersManager({
               <th className="px-3 py-2 text-right">ארגון</th>
               <th className="px-3 py-2 text-right">תפקיד</th>
               <th className="px-3 py-2 text-right">כניסה אחרונה</th>
+              <th className="px-3 py-2 text-right">מכשיר</th>
               <th className="px-3 py-2 text-right">סטטוס</th>
               <th className="px-3 py-2 text-right">פעולות</th>
             </tr>
@@ -258,6 +268,15 @@ export default function UsersManager({
                 <td className="px-3 py-2">{u.role === "admin" ? "מנהל" : "רגיל"}</td>
                 <td className="px-3 py-2 text-brand-muted" dir="ltr">
                   {lastLogin[u.id] ? formatDateTime(lastLogin[u.id]) : "—"}
+                </td>
+                <td className="px-3 py-2 text-xs text-brand-muted">
+                  {u.role === "admin"
+                    ? "—"
+                    : u.active_device_id
+                      ? `${u.active_device_label ?? "מכשיר"} · ${
+                          u.device_bound_at ? formatDateTime(u.device_bound_at) : ""
+                        }`
+                      : "לא קשור"}
                 </td>
                 <td className="px-3 py-2">
                   <span
@@ -293,6 +312,14 @@ export default function UsersManager({
                     >
                       {u.role === "admin" ? "הפוך לרגיל" : "הפוך למנהל"}
                     </button>
+                    {u.role !== "admin" && u.active_device_id && (
+                      <button
+                        onClick={() => resetDevice(u)}
+                        className="rounded-lg border border-brand-warning px-2 py-1 text-xs font-semibold text-brand-warning"
+                      >
+                        אפס מכשיר
+                      </button>
+                    )}
                     {u.id !== currentUserId && (
                       <button
                         onClick={() => onDelete(u)}
@@ -307,7 +334,7 @@ export default function UsersManager({
             ))}
             {users.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-3 py-6 text-center text-brand-muted">
+                <td colSpan={8} className="px-3 py-6 text-center text-brand-muted">
                   אין משתמשים עדיין.
                 </td>
               </tr>
