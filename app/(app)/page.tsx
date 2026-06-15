@@ -57,7 +57,6 @@ export default async function HomePage({
 
   const lines = await getOrgOrderLines(targetOrgId);
   const balances = summarizeBalances(lines);
-  const total = balances.reduce((s, b) => s + b.balance, 0);
 
   // שם הרפת המוצגת (למנהל)
   let orgName: string | null = profile.organization?.name ?? null;
@@ -101,14 +100,6 @@ export default async function HomePage({
 
       {balances.length > 0 && (
         <>
-          {/* כרטיס סיכום כולל */}
-          <div className="rounded-2xl border border-brand-primary bg-brand-primary-light p-4 text-center">
-            <div className="text-sm text-brand-primary-dark">סך הכל יתרה למשיכה (טון)</div>
-            <div className="mt-1 text-3xl font-extrabold text-brand-primary-dark" dir="ltr">
-              {formatNumberWhole(total)}
-            </div>
-          </div>
-
           {/* כרטיס לכל חומר */}
           <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {balances.map((b) => (

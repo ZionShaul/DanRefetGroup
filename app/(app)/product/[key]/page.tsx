@@ -48,8 +48,11 @@ export default async function ProductPage({
   return (
     <div className="space-y-5">
       <TrackOnMount event="view_product" properties={{ product }} />
-      <Link href={`/${qs}`} className="inline-block text-sm text-brand-primary underline">
-        → חזרה ליתרות
+      <Link
+        href={`/${qs}`}
+        className="inline-flex items-center gap-2 rounded-xl bg-brand-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-primary-dark"
+      >
+        <span aria-hidden>→</span> חזרה ליתרות
       </Link>
 
       <div>
@@ -60,30 +63,30 @@ export default async function ProductPage({
       {/* טבלת סיכום */}
       <section className="rounded-2xl border border-brand-line bg-brand-surface p-4">
         <h2 className="mb-2 text-base font-semibold text-brand-ink">סיכום יתרה</h2>
-        <div className="table-scroll rounded-xl border border-brand-line">
-          <table className="w-full min-w-[360px] text-sm">
+        <div className="overflow-hidden rounded-xl border border-brand-line">
+          <table className="w-full table-fixed text-sm">
             <thead className="bg-brand-primary-light text-brand-primary-dark">
               <tr>
-                <th className="px-3 py-2 text-right">חודש אספקה</th>
-                <th className="px-3 py-2 text-right">ספק</th>
-                <th className="px-3 py-2 text-left">יתרה (טון)</th>
+                <th className="px-2 py-2 text-right">חודש אספקה</th>
+                <th className="px-2 py-2 text-right">ספק</th>
+                <th className="px-2 py-2 text-left">יתרה</th>
               </tr>
             </thead>
             <tbody>
               {summary.map((r, i) => (
                 <tr key={i} className="border-t border-brand-line/60">
-                  <td className="px-3 py-2">{formatMonth(r.month)}</td>
-                  <td className="px-3 py-2">{r.supplier ?? "—"}</td>
-                  <td className="px-3 py-2 text-left" dir="ltr">
+                  <td className="px-2 py-2" dir="ltr">{formatMonth(r.month)}</td>
+                  <td className="px-2 py-2">{r.supplier ?? "—"}</td>
+                  <td className="px-2 py-2 text-left" dir="ltr">
                     {formatNumberWhole(r.balance)}
                   </td>
                 </tr>
               ))}
               <tr className="border-t-2 border-brand-primary/40 bg-brand-primary-light font-bold text-brand-primary-dark">
-                <td className="px-3 py-2" colSpan={2}>
+                <td className="px-2 py-2" colSpan={2}>
                   {`סה"כ ${product}`}
                 </td>
-                <td className="px-3 py-2 text-left" dir="ltr">
+                <td className="px-2 py-2 text-left" dir="ltr">
                   {formatNumberWhole(subtotal)}
                 </td>
               </tr>
@@ -95,33 +98,29 @@ export default async function ProductPage({
       {/* שורות מפורטות */}
       <section className="rounded-2xl border border-brand-line bg-brand-surface p-4">
         <h2 className="mb-2 text-base font-semibold text-brand-ink">שורות הזמנה ({lines.length})</h2>
-        <div className="table-scroll rounded-xl border border-brand-line">
-          <table className="w-full min-w-[640px] text-xs">
+        <div className="overflow-hidden rounded-xl border border-brand-line">
+          <table className="w-full text-xs">
             <thead className="bg-brand-bg text-brand-muted">
               <tr>
                 <th className="px-2 py-2 text-right">ספק</th>
-                <th className="px-2 py-2 text-right">הזמנה</th>
-                <th className="px-2 py-2 text-right">תאריך הזמנה</th>
                 <th className="px-2 py-2 text-right">חודש אספקה</th>
-                <th className="px-2 py-2 text-left">מחיר</th>
-                <th className="px-2 py-2 text-left">טון מוזמן</th>
-                <th className="px-2 py-2 text-left">נלקח</th>
                 <th className="px-2 py-2 text-left">יתרה</th>
+                <th className="px-2 py-2 text-left">מחיר</th>
+                <th className="px-2 py-2 text-right">הזמנה</th>
+                <th className="px-2 py-2 text-right">תאריך</th>
               </tr>
             </thead>
             <tbody>
               {lines.map((l: OrderLine) => (
                 <tr key={l.id} className="border-t border-brand-line/60">
                   <td className="px-2 py-2">{l.supplier ?? "—"}</td>
-                  <td className="px-2 py-2" dir="ltr">{l.order_no ?? "—"}</td>
-                  <td className="px-2 py-2" dir="ltr">{formatDate(l.order_date)}</td>
                   <td className="px-2 py-2" dir="ltr">{formatMonth(l.delivery_month)}</td>
-                  <td className="px-2 py-2 text-left" dir="ltr">{formatNumber(l.price)}</td>
-                  <td className="px-2 py-2 text-left" dir="ltr">{formatNumber(l.tons_ordered)}</td>
-                  <td className="px-2 py-2 text-left" dir="ltr">{formatNumber(l.qty_taken)}</td>
                   <td className="px-2 py-2 text-left font-semibold text-brand-primary" dir="ltr">
                     {formatNumber(l.balance)}
                   </td>
+                  <td className="px-2 py-2 text-left" dir="ltr">{formatNumber(l.price)}</td>
+                  <td className="px-2 py-2" dir="ltr">{l.order_no ?? "—"}</td>
+                  <td className="px-2 py-2" dir="ltr">{formatDate(l.order_date)}</td>
                 </tr>
               ))}
             </tbody>

@@ -10,6 +10,9 @@ export default function BottomNav({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
   const tabs = [HOME_TAB, ...(isAdmin ? [ADMIN_TAB] : [])];
 
+  // אין צורך בתפריט ניווט כשיש מסך אחד בלבד (משתמש רפת)
+  if (tabs.length <= 1) return null;
+
   return (
     <nav className="sticky bottom-0 z-10 border-t border-brand-line bg-brand-surface">
       <ul className="mx-auto flex max-w-2xl">
