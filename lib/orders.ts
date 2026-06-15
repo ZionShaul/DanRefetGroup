@@ -25,17 +25,22 @@ export async function getOrgOrderLines(orgId: string): Promise<OrderLine[]> {
   return (data as OrderLine[]) ?? [];
 }
 
-/** סיכום יתרה למשיכה לכל חומר (שם פריט). מוצגים רק חומרים עם יתרה שונה מ-0. */
-export function summarizeBalances(lines: OrderLine[]): ProductBalance[] {
+/**
+ * סיכום יתרה למשיכה לכל חומר (שם פריט).
+ * נכללות רק שורות עם יתרה גדולה מ-minBalance (סף תצוגה), ומוצגים חומרים עם סכום חיובי.
+ */
+export function summarizeBalances(lines: OrderLine[], minBalance = 0): ProductBalance[] {
   const map = new Map<string, ProductBalance>();
   for (const l of lines) {
+    const bal = l.balance ?? 0;
+    if (bal <= minBalance) continue;
     const cur = map.get(l.product) ?? { product: l.product, balance: 0, lineCount: 0 };
-    cur.balance += l.balance ?? 0;
+    cur.balance += bal;
     cur.lineCount += 1;
     map.set(l.product, cur);
   }
   return [...map.values()]
-    .filter((p) => Math.round(p.balance) !== 0)
+    .filter((p) => Math.round(p.balance) > 0)
     .sort((a, b) => b.balance - a.balance);
 }
 

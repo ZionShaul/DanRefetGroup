@@ -84,6 +84,7 @@ export interface SystemSettings {
   whatsapp_number: string | null;
   whatsapp_message: string | null;
   whatsapp_enabled: boolean;
+  min_balance: number; // סף יתרה מינימלי לתצוגה (טון)
 }
 
 // ===== טיפוסים מחושבים לתצוגת הרפת =====

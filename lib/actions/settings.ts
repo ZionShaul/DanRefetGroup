@@ -129,3 +129,20 @@ export async function updateWhatsApp(formData: FormData): Promise<ActionResult> 
   revalidatePath("/", "layout");
   return { ok: true };
 }
+
+/** עדכון סף היתרה המינימלי לתצוגה (טון). */
+export async function updateMinBalance(formData: FormData): Promise<ActionResult> {
+  await requireAdmin();
+  const raw = String(formData.get("min_balance") || "").trim().replace(/,/g, "");
+  const num = Number(raw);
+  if (raw === "" || Number.isNaN(num) || num < 0) {
+    return { ok: false, error: "יש להזין מספר תקין (0 ומעלה)." };
+  }
+
+  const db = createAdminClient();
+  const { error } = await db.from("system_settings").update({ min_balance: num }).eq("id", 1);
+  if (error) return { ok: false, error: "שגיאה בשמירה: " + error.message };
+
+  revalidatePath("/", "layout");
+  return { ok: true };
+}

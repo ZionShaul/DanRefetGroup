@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
+import { getSystemSettings } from "@/lib/settings";
 import { getOrgOrderLines, resolveTargetOrgId } from "@/lib/orders";
 import { formatNumberWhole, formatMonth, formatDate, formatNumber } from "@/lib/format";
 import TrackOnMount from "@/components/TrackOnMount";
@@ -23,7 +24,13 @@ export default async function ProductPage({
 
   const qs = profile.role === "admin" ? `?org=${encodeURIComponent(targetOrgId)}` : "";
 
-  const lines = (await getOrgOrderLines(targetOrgId)).filter((l) => l.product === product);
+  const settings = await getSystemSettings();
+  const minBalance = settings.min_balance ?? 14;
+
+  // רק שורות של החומר עם יתרה גדולה מהסף
+  const lines = (await getOrgOrderLines(targetOrgId)).filter(
+    (l) => l.product === product && (l.balance ?? 0) > minBalance,
+  );
 
   // סיכום לפי (חודש אספקה, ספק) – כמו טבלת הסיכום באקסל
   const sumMap = new Map<
@@ -99,28 +106,28 @@ export default async function ProductPage({
       <section className="rounded-2xl border border-brand-line bg-brand-surface p-4">
         <h2 className="mb-2 text-base font-semibold text-brand-ink">שורות הזמנה ({lines.length})</h2>
         <div className="overflow-hidden rounded-xl border border-brand-line">
-          <table className="w-full text-xs">
+          <table className="w-full table-fixed text-[11px]">
             <thead className="bg-brand-bg text-brand-muted">
               <tr>
-                <th className="px-2 py-2 text-right">ספק</th>
-                <th className="px-2 py-2 text-right">חודש אספקה</th>
-                <th className="px-2 py-2 text-left">יתרה</th>
-                <th className="px-2 py-2 text-left">מחיר</th>
-                <th className="px-2 py-2 text-right">הזמנה</th>
-                <th className="px-2 py-2 text-right">תאריך</th>
+                <th className="px-1.5 py-2 text-right">ספק</th>
+                <th className="px-1.5 py-2 text-right">חודש</th>
+                <th className="px-1.5 py-2 text-left">יתרה</th>
+                <th className="px-1.5 py-2 text-left">מחיר</th>
+                <th className="px-1.5 py-2 text-right">הזמנה</th>
+                <th className="px-1.5 py-2 text-right">תאריך</th>
               </tr>
             </thead>
             <tbody>
               {lines.map((l: OrderLine) => (
-                <tr key={l.id} className="border-t border-brand-line/60">
-                  <td className="px-2 py-2">{l.supplier ?? "—"}</td>
-                  <td className="px-2 py-2" dir="ltr">{formatMonth(l.delivery_month)}</td>
-                  <td className="px-2 py-2 text-left font-semibold text-brand-primary" dir="ltr">
+                <tr key={l.id} className="border-t border-brand-line/60 align-top">
+                  <td className="px-1.5 py-2 break-words">{l.supplier ?? "—"}</td>
+                  <td className="px-1.5 py-2" dir="ltr">{formatMonth(l.delivery_month)}</td>
+                  <td className="px-1.5 py-2 text-left font-semibold text-brand-primary" dir="ltr">
                     {formatNumber(l.balance)}
                   </td>
-                  <td className="px-2 py-2 text-left" dir="ltr">{formatNumber(l.price)}</td>
-                  <td className="px-2 py-2" dir="ltr">{l.order_no ?? "—"}</td>
-                  <td className="px-2 py-2" dir="ltr">{formatDate(l.order_date)}</td>
+                  <td className="px-1.5 py-2 text-left" dir="ltr">{formatNumber(l.price)}</td>
+                  <td className="px-1.5 py-2 break-words" dir="ltr">{l.order_no ?? "—"}</td>
+                  <td className="px-1.5 py-2" dir="ltr">{formatDate(l.order_date)}</td>
                 </tr>
               ))}
             </tbody>

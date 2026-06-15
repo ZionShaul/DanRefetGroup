@@ -15,6 +15,7 @@ export async function getSystemSettings(): Promise<SystemSettings> {
       whatsapp_number: null,
       whatsapp_message: null,
       whatsapp_enabled: false,
+      min_balance: 14,
     }
   );
 }

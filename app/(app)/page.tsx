@@ -56,7 +56,7 @@ export default async function HomePage({
   }
 
   const lines = await getOrgOrderLines(targetOrgId);
-  const balances = summarizeBalances(lines);
+  const balances = summarizeBalances(lines, settings.min_balance ?? 14);
 
   // שם הרפת המוצגת (למנהל)
   let orgName: string | null = profile.organization?.name ?? null;
