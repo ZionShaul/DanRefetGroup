@@ -1,21 +1,13 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatNumber, formatDateTime } from "@/lib/format";
+import { EVENT_LABELS } from "@/lib/analytics/labels";
 import DataManager from "./DataManager";
+import ExportControls from "./ExportControls";
 
 export const metadata = { title: "סטטיסטיקה - משקי דן רכש רפתות" };
 
 const WARN_ROWS = 100000; // סף התרעה על גודל הטבלה
-
-const EVENT_LABELS: Record<string, string> = {
-  login: "כניסה",
-  view_screen: "צפיית מסך",
-  view_product: "צפייה בחומר",
-  click_edan: "לחיצת עידן חדש",
-  click_whatsapp: "לחיצת וואטסאפ",
-  click_registration: "לחיצת בקשת רישום",
-  click_install: "לחיצת התקנה",
-  install_outcome: "תוצאת התקנה",
-};
 
 type CountRow = { event_type: string; count: number; distinct_users: number };
 type ProductRow = { product: string; views: number };
@@ -54,9 +46,12 @@ export default async function AnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-brand-ink">סטטיסטיקת שימוש</h1>
-        <p className="mt-0.5 text-sm text-brand-muted">30 הימים האחרונים</p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-bold text-brand-ink">סטטיסטיקת שימוש</h1>
+          <p className="mt-0.5 text-sm text-brand-muted">30 הימים האחרונים</p>
+        </div>
+        <ExportControls />
       </div>
 
       {/* KPI */}
@@ -93,18 +88,43 @@ export default async function AnalyticsPage() {
         </Panel>
       </div>
 
-      {/* משתמשים פעילים */}
+      {/* משתמשים פעילים – לחיצה על שם פותחת את פירוט הפעולות */}
       <Panel title="משתמשים פעילים">
-        <SimpleTable
-          head={["שם", "רפת", "פעולות", "פעילות אחרונה"]}
-          rows={userRows.map((u) => [
-            u.full_name ?? "—",
-            u.org_name ?? "—",
-            formatNumber(u.event_count),
-            formatDateTime(u.last_event),
-          ])}
-          empty="אין פעילות משתמשים עדיין."
-        />
+        {userRows.length === 0 ? (
+          <p className="text-sm text-brand-muted">אין פעילות משתמשים עדיין.</p>
+        ) : (
+          <div className="table-scroll">
+            <table className="w-full text-sm">
+              <thead className="bg-brand-primary-light text-brand-primary-dark">
+                <tr>
+                  <th className="px-3 py-2 text-right font-semibold">שם</th>
+                  <th className="px-3 py-2 text-right font-semibold">רפת</th>
+                  <th className="px-3 py-2 text-right font-semibold">פעולות</th>
+                  <th className="px-3 py-2 text-right font-semibold">פעילות אחרונה</th>
+                </tr>
+              </thead>
+              <tbody>
+                {userRows.map((u) => (
+                  <tr key={u.user_id} className="border-t border-brand-line/60">
+                    <td className="px-3 py-2">
+                      <Link
+                        href={`/admin/analytics/${u.user_id}`}
+                        className="font-medium text-brand-primary underline"
+                      >
+                        {u.full_name ?? "—"}
+                      </Link>
+                    </td>
+                    <td className="px-3 py-2 text-brand-ink">{u.org_name ?? "—"}</td>
+                    <td className="px-3 py-2 text-brand-ink">{formatNumber(u.event_count)}</td>
+                    <td className="px-3 py-2 text-brand-muted" dir="ltr">
+                      {formatDateTime(u.last_event)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Panel>
 
       {/* ניהול נתונים + התרעת סף */}
