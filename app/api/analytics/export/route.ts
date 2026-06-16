@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import * as XLSX from "xlsx";
 import { getCurrentProfile } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { eventLabel, describeEvent } from "@/lib/analytics/labels";
+import { eventLabel, describeEvent, screenName } from "@/lib/analytics/labels";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -43,11 +43,17 @@ export async function GET(request: NextRequest) {
   if (to) query = query.lte("created_at", to);
   if (user) query = query.eq("user_id", user);
 
-  const { data, error } = await query;
+  const [{ data, error }, { data: orgs }] = await Promise.all([
+    query,
+    db.from("organizations").select("id, name"),
+  ]);
   if (error) {
     return new NextResponse("שגיאה בשליפת הנתונים: " + error.message, { status: 500 });
   }
 
+  const orgMap = new Map<string, string>(
+    ((orgs as { id: string; name: string }[] | null) ?? []).map((o) => [o.id, o.name]),
+  );
   const events = (data as unknown as EventRow[]) ?? [];
   const rows = events.map((e) => ({
     "תאריך": formatHe(e.created_at),
@@ -55,8 +61,8 @@ export async function GET(request: NextRequest) {
     "אימייל": e.user?.email ?? "",
     "רפת": e.organization?.name ?? "",
     "סוג אירוע": eventLabel(e.event_type),
-    "פרטים": describeEvent(e.event_type, e.properties),
-    "מסך": e.path ?? "",
+    "פרטים": describeEvent(e.event_type, e.properties, orgMap),
+    "מסך": screenName(e.path),
   }));
 
   const ws = XLSX.utils.json_to_sheet(rows, {
@@ -82,6 +88,7 @@ function formatHe(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
   return d.toLocaleString("he-IL", {
+    timeZone: "Asia/Jerusalem",
     day: "2-digit",
     month: "2-digit",
     year: "numeric",

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdmin } from "@/lib/auth";
 import { formatDateTime } from "@/lib/format";
-import { eventLabel, describeEvent } from "@/lib/analytics/labels";
+import { eventLabel, describeEvent, screenName } from "@/lib/analytics/labels";
 
 export const metadata = { title: "פעילות משתמש - סטטיסטיקה" };
 
@@ -23,7 +23,7 @@ export default async function UserActivityPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: profile }, { data: events }] = await Promise.all([
+  const [{ data: profile }, { data: events }, { data: orgs }] = await Promise.all([
     supabase
       .from("profiles")
       .select("full_name, email, organization:organizations(name)")
@@ -35,10 +35,14 @@ export default async function UserActivityPage({
       .eq("user_id", id)
       .order("created_at", { ascending: false })
       .limit(500),
+    supabase.from("organizations").select("id, name"),
   ]);
 
   const user = profile as { full_name: string; email: string; organization: { name: string } | null } | null;
   const rows = (events as EventRow[] | null) ?? [];
+  const orgMap = new Map<string, string>(
+    ((orgs as { id: string; name: string }[] | null) ?? []).map((o) => [o.id, o.name]),
+  );
 
   return (
     <div className="space-y-5">
@@ -85,11 +89,9 @@ export default async function UserActivityPage({
                   </td>
                   <td className="px-3 py-2 text-brand-ink">{eventLabel(e.event_type)}</td>
                   <td className="px-3 py-2 text-brand-ink">
-                    {describeEvent(e.event_type, e.properties) || "—"}
+                    {describeEvent(e.event_type, e.properties, orgMap) || "—"}
                   </td>
-                  <td className="px-3 py-2 text-brand-muted" dir="ltr">
-                    {e.path ?? "—"}
-                  </td>
+                  <td className="px-3 py-2 text-brand-muted">{screenName(e.path)}</td>
                 </tr>
               ))}
               {rows.length === 0 && (
