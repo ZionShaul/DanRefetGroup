@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pandoc --track-changes=all \"אפיון_משקי_דן_מחירון_הדברה_ודשן.docx\" -o spec_extracted.md)",
+      "Bash(python \"C:/Users/zion/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/7a29869d-8d0a-45f7-8437-b8e78e620d10/ab2962fe-e4f9-4ecf-993e-20de58029796/skills/docx/scripts/office/unpack.py\" \"C:/claude-projects/DanPriceList/אפיון_משקי_דן_מחירון_הדברה_ודשן.docx\" \"C:/claude-projects/DanPriceList/unpacked/\")",
+      "Read(//c/Users/zion/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/7a29869d-8d0a-45f7-8437-b8e78e620d10/ab2962fe-e4f9-4ecf-993e-20de58029796/skills/docx/scripts/**)",
+      "Read(//c/Users/zion/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/7a29869d-8d0a-45f7-8437-b8e78e620d10/ab2962fe-e4f9-4ecf-993e-20de58029796/skills/docx/**)"
+    ]
+  }
+}

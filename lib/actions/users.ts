@@ -296,5 +296,28 @@ export async function createOrganization(name: string): Promise<ActionResult> {
     .insert({ name: trimmed, excel_client_name: trimmed, status: "active" });
   if (error) return { ok: false, error: "שגיאה ביצירת ארגון: " + error.message };
   revalidatePath("/admin/users");
+  revalidatePath("/admin/farms");
+  return { ok: true };
+}
+
+/**
+ * מחיקת רפת (ארגון). מנקה את שורות ההזמנה שלה; משתמשים משויכים יהפכו ללא-ארגון (FK).
+ * האזהרה על הזמנות פתוחות מתבצעת ב-UI (אישור כפול) לפני הקריאה.
+ */
+export async function deleteOrganization(id: string): Promise<ActionResult> {
+  await requireAdmin();
+  if (!id) return { ok: false, error: "מזהה רפת חסר" };
+  const db = createAdminClient();
+
+  // ניקוי שורות ההזמנה של הרפת (אחרת היו נשארות מיותמות עם FK set null)
+  const { error: olErr } = await db.from("order_lines").delete().eq("organization_id", id);
+  if (olErr) return { ok: false, error: "שגיאה במחיקת נתוני ההזמנות: " + olErr.message };
+
+  const { error } = await db.from("organizations").delete().eq("id", id);
+  if (error) return { ok: false, error: "שגיאה במחיקת הרפת: " + error.message };
+
+  revalidatePath("/admin/farms");
+  revalidatePath("/admin/users");
+  revalidatePath("/", "layout");
   return { ok: true };
 }

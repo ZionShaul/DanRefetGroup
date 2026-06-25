@@ -45,7 +45,7 @@ export default async function AdminHomePage() {
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <QuickLink href="/admin/upload" label="טעינת קובץ" icon="📄" />
         <QuickLink href="/admin/users" label={`משתמשים (${userCount ?? 0})`} icon="👥" />
-        <QuickLink href="/" label={`רפתות (${orgCount ?? 0})`} icon="🐄" />
+        <QuickLink href="/admin/farms" label={`רפתות (${orgCount ?? 0})`} icon="🐄" />
         <QuickLink href="/admin/analytics" label="סטטיסטיקה" icon="📊" />
         <QuickLink href="/admin/settings" label="הגדרות מערכת" icon="⚙️" />
       </div>
