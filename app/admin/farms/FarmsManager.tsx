@@ -27,11 +27,16 @@ export default function FarmsManager({ farms }: { farms: FarmStat[] }) {
   }
 
   async function removeFarm(f: FarmStat) {
-    // אזהרה כפולה כשיש הזמנות פתוחות
-    if (f.open_count > 0) {
+    // אזהרה כפולה כשיש הזמנות פתוחות או משתמשים משויכים
+    const warnings: string[] = [];
+    if (f.open_count > 0) warnings.push(`${f.open_count} שורות עם יתרה פתוחה`);
+    if (f.users_count > 0) warnings.push(`${f.users_count} משתמשים משויכים`);
+
+    if (warnings.length > 0) {
       if (
         !confirm(
-          `שים לב: לרפת "${f.name}" יש ${f.open_count} שורות עם יתרה פתוחה.\nמחיקה תסיר את הרפת ואת כל נתוני ההזמנות שלה. להמשיך?`,
+          `שים לב: לרפת "${f.name}" יש ${warnings.join(" ו-")}.\n` +
+            `מחיקה תסיר את הרפת ואת נתוני ההזמנות שלה, והמשתמשים יהפכו ללא-רפת. להמשיך?`,
         )
       )
         return;
